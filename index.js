@@ -1,48 +1,46 @@
 const { logger } = require('@jobscale/logger');
-const { fetch } = require('@jobscale/fetch');
-const { app: news } = require('./app');
+const { app: cert } = require('./app');
 const { list } = require('./app/list');
+
+const wait = ms => {
+  const prom = {};
+  prom.pending = new Promise((...argv) => { [prom.resolve] = argv; });
+  setTimeout(prom.resolve, ms);
+  return prom.pending;
+};
 
 class App {
   postSlack(data) {
     const url = 'https://tanpo.jsx.jp/api/slack';
     const options = {
-      url,
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
       },
-      data,
+      body: JSON.stringify(data),
     };
-    return fetch(options);
+    return fetch(url, options);
   }
 
-  execute(uri) {
-    return news.fetch(uri)
-    .then(rows => {
-      const text = rows.join('\n\n');
+  execute(host) {
+    return cert.getSSLCertificateInfo(host)
+    .then(item => {
+      const text = Object.entries(item).map(v => v.join(': ')).join('\n');
       logger.info(text);
       this.postSlack({
-        channel: 'C4WN3244D',
+        channel: 'C9LH546RW',
         icon_emoji: ':moneybag:',
-        username: 'News',
+        username: 'Certificate',
         text,
       });
     });
   }
 
-  wait(ms) {
-    const prom = {};
-    prom.pending = new Promise((...argv) => { [prom.resolve, prom.reject] = argv; });
-    setTimeout(prom.resolve, ms);
-    return prom.pending;
-  }
-
   async start() {
     for (let i = 0; i < list.length;) {
-      const uri = list[i];
-      await this.execute(uri);
-      if (++i < list.length) await this.wait(5000); // eslint-disable-line no-plusplus
+      const item = list[i];
+      this.execute(item);
+      if (++i < list.length) await wait(5000); // eslint-disable-line no-plusplus
     }
   }
 }

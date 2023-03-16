@@ -1,5 +1,6 @@
 const list = [
-  'https://news.ntv.co.jp/live',
+  'jsx.jp',
+  'cdn.jsx.jp',
 ];
 
 module.exports = {
