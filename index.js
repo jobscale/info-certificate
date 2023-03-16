@@ -29,7 +29,7 @@ class App {
       logger.info(text);
       this.postSlack({
         channel: 'C9LH546RW',
-        icon_emoji: ':moneybag:',
+        icon_emoji: ':globe_with_meridians:',
         username: 'Certificate',
         text,
       });
