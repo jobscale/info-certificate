@@ -40,7 +40,7 @@ class App {
     for (let i = 0; i < list.length;) {
       const item = list[i];
       this.execute(item);
-      if (++i < list.length) await wait(5000); // eslint-disable-line no-plusplus
+      if (++i < list.length) await wait(2000); // eslint-disable-line no-plusplus
     }
   }
 }
