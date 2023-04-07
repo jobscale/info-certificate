@@ -2,12 +2,7 @@ const { logger } = require('@jobscale/logger');
 const { app: cert } = require('./app');
 const { list } = require('./app/list');
 
-const wait = ms => {
-  const prom = {};
-  prom.pending = new Promise((...argv) => { [prom.resolve] = argv; });
-  setTimeout(prom.resolve, ms);
-  return prom.pending;
-};
+const wait = ms => new Promise(resolve => { setTimeout(resolve, ms); });
 
 class App {
   postSlack(data) {
