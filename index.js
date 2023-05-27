@@ -17,26 +17,29 @@ class App {
     return fetch(url, options);
   }
 
-  execute(host) {
-    return cert.getSSLCertificateInfo(host)
-    .then(item => {
-      const text = Object.entries(item).map(v => v.join(': ')).join('\n');
-      logger.info(text);
-      this.postSlack({
+  async post(rowsList) {
+    const rows = rowsList.flat();
+    if (!rows.length) return;
+    logger.info(rows);
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < rows.length; ++i && await wait(8000)) {
+      await this.postSlack({
         channel: 'C9LH546RW',
         icon_emoji: ':globe_with_meridians:',
         username: 'Certificate',
-        text,
+        text: rows[i],
       });
-    });
+    }
+  }
+
+  fetch(host) {
+    return cert.getSSLCertificateInfo(host)
+    .catch(e => logger.error({ error: e.massage, status: e.status, host }) || []);
   }
 
   async start() {
-    for (let i = 0; i < list.length;) {
-      const item = list[i];
-      this.execute(item);
-      if (++i < list.length) await wait(2000); // eslint-disable-line no-plusplus
-    }
+    const rows = await Promise.all(list.map(host => this.fetch(host)));
+    return this.post(rows);
   }
 }
 

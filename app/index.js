@@ -20,24 +20,25 @@ class App {
       rejectUnauthorized: false,
       hostname: host,
     };
-    return new Promise((resolve, reject) => {
-      const req = https.request(options, res => {
-        const crt = res.connection.getPeerCertificate();
-        const validFrom = new Date(crt.valid_from);
-        const validTo = new Date(crt.valid_to);
-        const daysRemaining = getDaysRemaining(new Date(), validTo);
-        const valid = res.socket.authorized || false;
-        resolve({
-          host,
-          valid: valid && daysRemaining > 0,
-          validFrom: validFrom.toISOString(),
-          validTo: validTo.toISOString(),
-          daysRemaining,
-        });
+    const prom = {};
+    prom.pending = new Promise((...args) => { [prom.resolve, prom.reject] = args; });
+    const req = https.request(options, res => {
+      const crt = res.connection.getPeerCertificate();
+      const validFrom = new Date(crt.valid_from);
+      const validTo = new Date(crt.valid_to);
+      const daysRemaining = getDaysRemaining(new Date(), validTo);
+      const valid = res.socket.authorized || false;
+      prom.resolve({
+        host,
+        valid: valid && daysRemaining > 0,
+        validFrom: validFrom.toISOString(),
+        validTo: validTo.toISOString(),
+        daysRemaining,
       });
-      req.on('error', reject);
-      req.end();
     });
+    req.on('error', prom.reject);
+    req.end();
+    return prom.pending;
   }
 }
 
