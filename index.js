@@ -20,10 +20,10 @@ class App {
   async post(rowsList) {
     const rows = rowsList.flat();
     if (!rows.length) return;
-    const text = Object.entries(rows).map(v => v.join(': ')).join('\n');
-    logger.info(text);
+    logger.info(rows);
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < rows.length; ++i && await wait(8000)) {
+      const text = Object.entries(rows[i]).map(v => v.join(': ')).join('\n');
       await this.postSlack({
         channel: 'C9LH546RW',
         icon_emoji: ':globe_with_meridians:',
