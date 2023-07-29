@@ -6,7 +6,7 @@ const wait = ms => new Promise(resolve => { setTimeout(resolve, ms); });
 
 class App {
   postSlack(data) {
-    const url = 'https://tanpo.jsx.jp/api/slack';
+    const url = 'https://jsx.jp/api/slack';
     const options = {
       method: 'post',
       headers: {
@@ -21,9 +21,13 @@ class App {
     const rows = rowsList.flat();
     if (!rows.length) return;
     logger.info(rows);
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < rows.length; ++i && await wait(8000)) {
-      const text = Object.entries(rows[i]).map(v => v.join(': ')).join('\n');
+    const opts = {};
+    // eslint-disable-next-line no-restricted-syntax
+    for (const row of rows) {
+      if (!opts.first) opts.first = true;
+      else await wait(8000);
+      row.expired = row.daysRemaining < 30 ? ':warning: Warning :warning:' : undefined;
+      const text = Object.entries(row).map(v => v.join(': ')).join('\n');
       await this.postSlack({
         channel: 'C9LH546RW',
         icon_emoji: ':globe_with_meridians:',
