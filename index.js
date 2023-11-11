@@ -9,9 +9,7 @@ class App {
     const url = 'https://jsx.jp/api/slack';
     const options = {
       method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     };
     return fetch(url, options);
@@ -29,7 +27,7 @@ class App {
       row.expired = row.daysRemaining < 30 ? ':warning: Warning :warning:' : undefined;
       const text = Object.entries(row).map(v => v.join(': ')).join('\n');
       await this.postSlack({
-        channel: 'C9LH546RW',
+        channel: 'infra',
         icon_emoji: ':globe_with_meridians:',
         username: 'Certificate',
         text,
