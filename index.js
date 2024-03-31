@@ -24,8 +24,9 @@ class App {
     for (const row of rows) {
       if (!opts.first) opts.first = true;
       else await wait(8000);
-      row.expired = row.daysRemaining < 30 ? ':warning: Warning :warning:' : undefined;
-      const text = Object.entries(row).map(v => v.join(': ')).join('\n');
+      row.expired = row.daysRemaining < 30 ? ':warning: Warning :warning: ' : '';
+      const [expired] = row.validTo.split('T');
+      const text = `${row.expired}Domain ${row.host} ${row.daysRemaining} expired ${expired}`;
       await this.postSlack({
         channel: 'infra',
         icon_emoji: ':globe_with_meridians:',
