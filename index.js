@@ -20,7 +20,6 @@ class App {
     if (!rows.length) return;
     logger.info(rows);
     const opts = {};
-    // eslint-disable-next-line no-restricted-syntax
     for (const row of rows) {
       if (!opts.first) opts.first = true;
       else await wait(8000);
