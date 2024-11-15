@@ -1,4 +1,8 @@
 module.exports = {
+  parserOptions: {
+    ecmaVersion: 2024,
+    sourceType: 'module',
+  },
   extends: 'airbnb-base',
   globals: {},
   rules: {

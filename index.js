@@ -2,8 +2,6 @@ const { logger } = require('@jobscale/logger');
 const { app: cert } = require('./app');
 const { list } = require('./app/list');
 
-const wait = ms => new Promise(resolve => { setTimeout(resolve, ms); });
-
 class App {
   postSlack(data) {
     const url = 'https://jsx.jp/api/slack';
@@ -19,25 +17,25 @@ class App {
     const rows = rowsList.flat();
     if (!rows.length) return;
     logger.info(rows);
-    const opts = {};
+    const text = [];
     for (const row of rows) {
-      if (!opts.first) opts.first = true;
-      else await wait(8000);
-      row.expired = row.daysRemaining < 30 ? ':warning: Warning :warning: ' : '';
-      const [expired] = row.validTo.split('T');
-      const text = `${row.expired}Domain ${row.host} ${row.daysRemaining} expired ${expired}`;
-      await this.postSlack({
-        channel: 'infra',
-        icon_emoji: ':globe_with_meridians:',
-        username: 'Certificate',
-        text,
-      });
+      const valid = row.daysRemaining < 30 ? ':warning: Warning :warning:' : ':large_green_circle:';
+      const [expires] = row.validTo?.split('T') || [];
+      text.push(`${valid} Expires ${row.daysRemaining} in ${expires} ${row.host}`);
     }
+    await this.postSlack({
+      channel: 'infra',
+      icon_emoji: ':globe_with_meridians:',
+      username: 'Certificate',
+      text: text.join('\n'),
+    });
   }
 
   fetch(host) {
-    return cert.getSSLCertificateInfo(host)
-    .catch(e => logger.error({ error: e.massage, status: e.status, host }) || []);
+    return fetch(`https://${host}`)
+    .then(res => { if (res.status !== 200) throw new Error('res.statusText'); })
+    .then(() => cert.getSSLCertificateInfo(host))
+    .catch(e => logger.error({ error: e.massage, status: e.status, host }) || { host });
   }
 
   async start() {
@@ -47,6 +45,4 @@ class App {
 }
 
 new App().start()
-.catch(e => {
-  logger.error(e.message, e);
-});
+.catch(e => { logger.error(e.message, e); });
