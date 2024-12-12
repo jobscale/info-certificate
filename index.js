@@ -21,7 +21,7 @@ class App {
     for (const row of rows) {
       const valid = row.daysRemaining < 30 ? ':warning: Warning :warning:' : ':large_green_circle:';
       const [expires] = row.validTo?.split('T') || [];
-      text.push(`${valid} Expires ${row.daysRemaining} in ${expires} ${row.host}`);
+      text.push(`${valid} Expires ${row.daysRemaining} in ${expires} https://${row.host}`);
     }
     await this.postSlack({
       channel: 'infra',
