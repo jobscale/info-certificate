@@ -19,7 +19,7 @@ class App {
     logger.info(rows);
     const text = [];
     for (const row of rows) {
-      const valid = row.daysRemaining < 30 ? ':warning: Warning :warning:' : ':large_green_circle:';
+      const valid = row.daysRemaining > 29 ? ':large_green_circle:' : ':warning: Warning :warning:';
       const [expires] = row.validTo?.split('T') || [];
       const url = `https://${row.host}`;
       const host = row.host.padStart(10, ' ');

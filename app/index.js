@@ -34,7 +34,7 @@ class App {
         daysRemaining,
       });
     });
-    req.on('error', prom.reject);
+    req.on('error', e => prom.reject(e));
     req.end();
     return prom.pending;
   }
