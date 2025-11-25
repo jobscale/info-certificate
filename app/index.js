@@ -1,5 +1,5 @@
-const https = require('https');
-const validator = require('validator');
+import https from 'https';
+import validator from 'validator';
 
 const getDaysBetween = (from, to) => Math.floor(Math.abs(+from - +to) / 8.64e7);
 const getDaysRemaining = (validFrom, validTo) => {
@@ -8,7 +8,7 @@ const getDaysRemaining = (validFrom, validTo) => {
   return daysRemaining;
 };
 
-class App {
+export class Cert {
   async getSSLCertificateInfo(host) {
     if (!validator.isFQDN(host)) throw new Error('Invalid host');
     const options = {
@@ -40,7 +40,5 @@ class App {
   }
 }
 
-module.exports = {
-  App,
-  app: new App(),
-};
+export const cert = new Cert();
+export default { Cert, cert };

@@ -1,6 +1,6 @@
-const { logger } = require('@jobscale/logger');
-const { app: cert } = require('./app');
-const { list } = require('./app/list');
+import { logger } from '@jobscale/logger';
+import { cert } from './app/index.js';
+import { list } from './app/list.js';
 
 class App {
   postSlack(data) {
