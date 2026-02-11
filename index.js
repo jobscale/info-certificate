@@ -33,15 +33,26 @@ class App {
     });
   }
 
-  fetch(host) {
-    return fetch(`https://${host}`)
-    .then(res => { if (res.status !== 200) throw new Error('res.statusText'); })
+  fetch(input, opts = {}) {
+    const { timeout = 6_000, ...init } = opts;
+    const ac = new AbortController();
+    ac.terminate = () => clearTimeout(ac.terminate.tid);
+    ac.terminate.tid = setTimeout(() => ac.abort(), timeout);
+    return fetch(input, { ...init, signal: ac.signal })
+    .finally(() => ac.terminate());
+  }
+
+  fetchSite(host) {
+    return this.fetch(`https://${host}`)
+    .then(res => { if (res.status !== 200) throw new Error(res.statusText); })
     .then(() => cert.getSSLCertificateInfo(host))
-    .catch(e => logger.error({ error: e.massage, status: e.status, host }) || { host });
+    .catch(e => logger.error({
+      cause: e.cause, error: e.massage, status: e.status, host,
+    }) || { host });
   }
 
   async start() {
-    const rows = await Promise.all(list.map(host => this.fetch(host)));
+    const rows = await Promise.all(list.map(host => this.fetchSite(host)));
     return this.post(rows);
   }
 }
