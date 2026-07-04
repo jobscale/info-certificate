@@ -19,7 +19,7 @@ class App {
     logger.info(rows);
     const text = [];
     for (const row of rows) {
-      const valid = row.daysRemaining > 29 ? ':large_green_circle:' : ':warning: Warning :warning:';
+      const valid = row.daysRemaining > 25 ? ':large_green_circle:' : ':warning: Warning :warning:';
       const [expires] = row.validTo?.split('T') || [];
       const url = `https://${row.host}`;
       const host = row.host.padStart(10, ' ');
@@ -47,7 +47,7 @@ class App {
     .then(res => { if (res.status !== 200) throw new Error(res.statusText); })
     .then(() => cert.getSSLCertificateInfo(host))
     .catch(e => logger.error({
-      cause: e.cause, error: e.massage, status: e.status, host,
+      cause: e.cause, error: e.message, status: e.status, host,
     }) || { host });
   }
 
