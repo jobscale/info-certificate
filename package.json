@@ -1,7 +1,7 @@
 {
-  "name": "info-certificate",
   "private": true,
-  "version": "0.1.2",
+  "name": "info-certificate",
+  "version": "0.1.3",
   "description": "information certificate",
   "keywords": [
     "certificate",
@@ -19,8 +19,8 @@
   },
   "pre-commit": "test",
   "dependencies": {
-    "@jobscale/logger": "^0.10.1",
-    "validator": "^13.15.23"
+    "@jobscale/create-logger": "^1.0.5",
+    "validator": "^13.15.35"
   },
   "devDependencies": {
     "@jobscale/eslint-plugin-standard": "^0.0.11",

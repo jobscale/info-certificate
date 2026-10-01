@@ -1,4 +1,4 @@
-import { logger } from '@jobscale/logger';
+import { logger } from '@jobscale/create-logger';
 import { cert } from './app/index.js';
 import { list } from './app/list.js';
 
